@@ -5,7 +5,7 @@ var https = require('https');
 var connect = require('connect');
 var serveStatic = require('serve-static');
 var connectLivereload = require('connect-livereload');
-var proxy = require('proxy-middleware');
+var proxy = require('http-proxy-middleware');
 var tinyLr = require('tiny-lr');
 var watch = require('watch');
 var fs = require('fs');
@@ -142,11 +142,7 @@ module.exports = function(options) {
 
   // Proxy requests
   for (var i = 0, len = config.proxies.length; i < len; i++) {
-    var proxyoptions = url.parse(config.proxies[i].target);
-    if (config.proxies[i].hasOwnProperty('options')) {
-      extend(proxyoptions, config.proxies[i].options);
-    }
-    app.use(config.proxies[i].source, proxy(proxyoptions));
+    app.use(config.proxies[i].source, proxy(config.proxies[i]));
   }
 
   if (config.directoryListing.enable) {
